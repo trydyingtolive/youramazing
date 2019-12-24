@@ -84,9 +84,12 @@ if __name__ ==  "__main__":
         __addText(img, 20, 40, "You're", "left", False)
         img.save("TextMaze.png")
         tag = printImg(img, True)
+        print("I'm Ready To Print!")
         while True:
             input_state = GPIO.input(18)
             if input_state == False:
+                print("Printing Maze")
                 doPrint(tag, "192.168.0.106")
                 break
+            time.sleep(0.1)
 
