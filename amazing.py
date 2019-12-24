@@ -2,6 +2,8 @@ from maze import *
 from PIL import Image, ImageDraw, ImageFont
 import packbits
 import socket
+import RPi.GPIO as GPIO
+import time
 
 def __convert(bitlist):
     "Converts a list of bits to bytes"
@@ -69,13 +71,22 @@ def __addText(img,y,size,text,x="center", invert=False):
     else:
         draw.text(loc, text, font=font, fill=255)
 
+if __name__ ==  "__main__":
+    GPIO.setmode(GPIO.BCM)
 
-m = Maze()
-m.create(54, 35, Maze.Create.BACKTRACKING)
-img = m.save_maze("maze.png", 5,15)
-__addText(img, 655, 40, "Amazing", "right", False)
-__addText(img, 20, 40, "You're", "left", False)
-img.save("TextMaze.png")
-tag = printImg(img, True)
-doPrint(tag, "192.168.0.106")
+    GPIO.setup(18, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    
+    while True:
+        m = Maze()
+        m.create(54, 35, Maze.Create.BACKTRACKING)
+        img = m.save_maze("maze.png", 5,15)
+        __addText(img, 655, 40, "Amazing", "right", False)
+        __addText(img, 20, 40, "You're", "left", False)
+        img.save("TextMaze.png")
+        tag = printImg(img, True)
+        while True:
+            input_state = GPIO.input(18)
+            if input_state == False:
+                doPrint(tag, "192.168.0.106")
+                break
 
